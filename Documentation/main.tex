@@ -1,0 +1,229 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=1in}
+
+\title{CT Marks Finder - Version 1 }
+\author{Sazid Hasan}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+
+This Python application uses \texttt{tkinter} for a GUI-based approach to allow users (students or teachers) to input student roll numbers and select multiple PDF files containing class test (CT) marks. The program then extracts the student's CT marks from the PDFs, calculates class averages, generates a comparison plot (student's marks vs. class average), and saves the plot and merged PDFs into a new combined PDF file.
+
+\subsection*{Key Features}
+\begin{itemize}
+    \item \textbf{Extract Marks for Students}: Extract marks from multiple PDFs for a specific student based on their roll number.
+    \item \textbf{Calculate Class Averages}: Calculate average marks for each CT from all students' marks found in the PDFs.
+    \item \textbf{Generate Plots}: Create line plots showing the student's marks and class averages for comparison.
+    \item \textbf{Merge PDFs}: Combine the original PDFs and the generated plot into one PDF file.
+    \item \textbf{GUI Interface}: The application provides a simple interface for user interaction using \texttt{tkinter}.
+\end{itemize}
+
+\section{Code Structure}
+
+\subsection{1. Dependencies}
+The program uses several libraries:
+\begin{itemize}
+    \item \textbf{PyPDF2}: To extract text from PDF files and merge multiple PDFs.
+    \item \textbf{matplotlib}: For plotting graphs.
+    \item \textbf{NumPy}: To handle numerical operations such as calculating averages.
+    \item \textbf{tkinter}: For the graphical user interface.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Library Imports]
+import tkinter as tk
+from tkinter import filedialog, messagebox
+import PyPDF2
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_pdf import PdfPages
+\end{lstlisting}
+
+\subsection{2. Functions}
+
+\subsubsection{extract\_all\_marks\_from\_pdf(pdf\_file)}
+\textbf{Purpose}: Extracts the marks for all students in the PDF file.
+
+\textbf{Process}: 
+\begin{itemize}
+    \item Opens the PDF file, extracts the text, and splits it line by line.
+    \item For each line, it checks if it contains valid student data (a roll number followed by CT marks).
+    \item Returns a list of marks for all students found in the file.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Function to Extract Marks of All Students]
+def extract_all_marks_from_pdf(pdf_file):
+    ...
+    return all_marks
+\end{lstlisting}
+
+\subsubsection{extract\_student\_marks\_from\_pdf(pdf\_file, roll\_number)}
+\textbf{Purpose}: Extracts marks for a specific student based on the roll number.
+
+\textbf{Process}:
+\begin{itemize}
+    \item Scans the PDF, identifies the student's roll number, and extracts their CT marks (up to 4 CTs).
+    \item Returns the list of marks for the student.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Function to Extract Specific Student Marks]
+def extract_student_marks_from_pdf(pdf_file, roll_number):
+    ...
+    return ct_marks
+\end{lstlisting}
+
+\subsubsection{accumulate\_student\_ct\_marks(pdf\_files, roll\_number)}
+\textbf{Purpose}: Accumulates the CT marks for a student from multiple PDF files.
+
+\textbf{Process}:
+\begin{itemize}
+    \item Iterates over each PDF and extracts the student's marks, accumulating them sequentially across files.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Function to Accumulate Student Marks Across PDFs]
+def accumulate_student_ct_marks(pdf_files, roll_number):
+    ...
+    return accumulated_marks
+\end{lstlisting}
+
+\subsubsection{calculate\_averages(all\_students\_marks)}
+\textbf{Purpose}: Calculates the average marks for each CT across all students.
+
+\textbf{Process}:
+\begin{itemize}
+    \item Converts the list of marks into a NumPy array and calculates the average for each CT.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Function to Calculate Class Averages]
+def calculate_averages(all_students_marks):
+    ...
+    return avg_marks
+\end{lstlisting}
+
+\subsubsection{plot\_marks(marks, avg\_marks, roll\_number)}
+\textbf{Purpose}: Generates a line plot comparing the student's CT marks to the class averages and saves it as a PDF.
+
+\textbf{Process}:
+\begin{itemize}
+    \item Plots the student's marks and the class averages for each CT in different colors.
+    \item Saves the plot to a PDF file named \texttt{Marks\_for\_\{roll\_number\}.pdf}.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Function to Plot Marks and Averages]
+def plot_marks(marks, avg_marks, roll_number):
+    ...
+    return pdf_filename
+\end{lstlisting}
+
+\subsubsection{merge\_pdfs(pdf\_files, output\_path)}
+\textbf{Purpose}: Merges multiple PDF files into one.
+
+\textbf{Process}:
+\begin{itemize}
+    \item Uses PyPDF2 to combine the student’s results and the original PDFs into a single output file.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Function to Merge PDFs]
+def merge_pdfs(pdf_files, output_path):
+    ...
+\end{lstlisting}
+
+\subsection{3. GUI Interface}
+
+The GUI uses \texttt{tkinter} to create an interface for users to input data and select PDF files.
+
+\subsubsection{browse\_files()}
+\textbf{Purpose}: Allows the user to select multiple PDF files using a file dialog.
+
+\begin{lstlisting}[language=Python, caption=File Browser]
+def browse_files():
+    ...
+\end{lstlisting}
+
+\subsubsection{find\_marks()}
+\textbf{Purpose}: Main function that processes the selected PDF files, extracts marks for the target student, calculates averages, plots the results, and merges the PDFs.
+
+\textbf{Process}:
+\begin{itemize}
+    \item Verifies input fields (roll number and PDFs).
+    \item Accumulates the student's marks from all PDFs.
+    \item Extracts and averages the class marks.
+    \item Calls the \texttt{plot\_marks} function to generate and save the plot as a PDF.
+    \item Merges the original PDFs and the generated plot into one final PDF.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Main Function to Find Marks]
+def find_marks():
+    ...
+\end{lstlisting}
+
+\subsection{Main Window Setup}
+
+The GUI window is set up using \texttt{tkinter}. It includes:
+\begin{itemize}
+    \item \textbf{Roll Number Input}: An entry box for the user to input the roll number.
+    \item \textbf{PDF File Selection}: A button to open the file dialog and select multiple PDF files.
+    \item \textbf{Submit Button}: A button to start the process of extracting marks, calculating averages, and generating results.
+\end{itemize}
+
+\begin{lstlisting}[language=Python, caption=Main Window Setup]
+root = tk.Tk()
+root.title("CT Marks Finder")
+...
+root.mainloop()
+\end{lstlisting}
+
+\section{How the Program Works}
+
+\begin{enumerate}
+    \item \textbf{Input Roll Number}: The user enters a roll number.
+    \item \textbf{Select PDFs}: The user selects one or more PDF files that contain class test (CT) marks.
+    \item \textbf{Process PDFs}: The program extracts the marks for the student and for all students in the class from the PDFs.
+    \item \textbf{Calculate Averages}: The class averages for each CT are calculated.
+    \item \textbf{Plot Results}: The student’s marks are plotted against the class averages and saved to a PDF.
+    \item \textbf{Merge PDFs}: The original PDFs and the generated plot are merged into a final output PDF.
+    \item \textbf{Save Results}: The final PDF file is saved to the disk.
+\end{enumerate}
+
+\section{Error Handling}
+
+\begin{itemize}
+    \item \textbf{File Selection}: If no files are selected, the user is alerted with a message box.
+    \item \textbf{Roll Number Input}: If no roll number is entered, the user is prompted to provide one.
+    \item \textbf{Merging PDFs}: Errors that occur during the merging of PDFs are handled with a message box alert.
+\end{itemize}
+
+\section{How to Use}
+
+\begin{enumerate}
+    \item Run the Program.
+    \item Enter the Roll Number of the student.
+    \item Select the PDF Files containing the CT marks.
+    \item Click "Find Marks".
+    \item The program will extract the marks, calculate class averages, and generate a plot.
+    \item The original PDFs and the plot will be combined into a single output PDF.
+\end{enumerate}
+
+\section{Limitations and Future Enhancements}
+
+\begin{itemize}
+    \item \textbf{Multiple CT marks}: Currently, the program can handle up to 4 CT marks per student.
+    \item \textbf{More Advanced Merging}: Future versions can include more advanced PDF processing features.
+    \item \textbf{Handling Missing Data}: Future versions may improve the handling of missing or inconsistent data in the PDFs.
+\end{itemize}
+
+\section{Version 1 Conclusion}
+
+This version provides a simple and effective way to extract and visualize student CT marks from multiple PDF files, offering a clear comparison against class averages. The use of Python libraries like \texttt{PyPDF2}, \texttt{matplotlib}, and \texttt{tkinter} makes this tool flexible and easy to use in academic settings.
+
+\end{document}
